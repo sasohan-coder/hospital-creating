@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard-styles.css">
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="/img/logo.jpg" alt="Logo" class="logo">
+            <div class="header-text">
+                <h3>Library</h3>
+                <p>Management</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/allotment" class="nav-item">
+                <i class="fas fa-bookmark"></i>
+                <span>Books Allotment</span>
+            </a>
+
+            <div class="nav-item-group">
+                <a href="#" class="nav-item group-toggle">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Books Management</span>
+                    <i class="fas fa-chevron-up toggle-icon"></i>
+                </a>
+                <div class="submenu">
+                    <a href="/book" class="submenu-item">
+                        <i class="fas fa-book"></i>
+                        <span>Manage Books</span>
+                    </a>
+                    <a href="/allotment-history" class="submenu-item">
+                        <i class="fas fa-history"></i>
+                        <span>Allotment History</span>
+                    </a>
+<!--                    <a href="#" class="submenu-item">-->
+<!--                        <i class="fas fa-paper-plane"></i>-->
+<!--                        <span>Submission</span>-->
+<!--                    </a>-->
+                </div>
+            </div>
+
+            <a href="/student" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Student Management</span>
+            </a>
+            <a href="/purchase" class="nav-item">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Purchase Books</span>
+            </a>
+            <a href="/vendor" class="nav-item">
+                <i class="fas fa-building"></i>
+                <span>Vendor Management</span>
+            </a>
+            <a href="/publication" class="nav-item">
+                <i class="fas fa-newspaper"></i>
+                <span>Publications</span>
+            </a>
+            <a href="/subscription" class="nav-item">
+                <i class="fas fa-file-invoice"></i>
+                <span>Subscription Type</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/logout" class="nav-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Welcome back, ARM Abir!</h1>
+            </div>
+            <div class="header-right">
+                <span class="date">Saturday 22nd November 2025</span>
+                <button class="cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <section class="content-area">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <div class="welcome-content">
+                    <h2>Library Management System</h2>
+                    <p>Manage your library efficiently with our comprehensive management system</p>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon books">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="metric-content">
+                        <p class="metric-label">Total Books</p>
+                        <p class="metric-value" th:text="${totalBooks}">0</p>
+                        <p class="metric-detail">In your library</p>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon students">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="metric-content">
+                        <p class="metric-label">Active Students</p>
+                        <p class="metric-value" th:text="${totalStudents}">0</p>
+                        <p class="metric-detail">Registered students</p>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon vendors">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="metric-content">
+                        <p class="metric-label">Vendors</p>
+                        <p class="metric-value" th:text="${totalVendors}">0</p>
+                        <p class="metric-detail">Book suppliers</p>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon allotments">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <div class="metric-content">
+                        <p class="metric-label">Active Allotments</p>
+                        <p class="metric-value" th:text="${activeAllotments}">0</p>
+                        <p class="metric-detail">Currently allotted</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Books Overview</h3>
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="chart-content">
+                        <div class="overview-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">
+                                    <div class="stat-indicator available"></div>
+                                    <span>Available Books</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <div class="stat-fill" id="availableFill" style="width: 0%;">
+                                        <span id="availablePercent">0%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-value" th:text="${availableBooks} + ' books'">0 books</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">
+                                    <div class="stat-indicator allotted"></div>
+                                    <span>Allotted Books</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <div class="stat-fill allotted" id="allottedFill" style="width: 0%;">
+                                        <span id="allottedPercent">0%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-value" th:text="${allottedBooks} + ' books'">0 books</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+<!--                <div class="chart-card">-->
+<!--                    <div class="chart-header">-->
+<!--                        <h3>Recent Activity</h3>-->
+<!--                        <i class="fas fa-history"></i>-->
+<!--                    </div>-->
+<!--                    <div class="chart-content">-->
+<!--                        <div class="activity-list">-->
+<!--                            <div class="activity-item">-->
+<!--                                <div class="activity-icon book-added">-->
+<!--                                    <i class="fas fa-plus"></i>-->
+<!--                                </div>-->
+<!--                                <div class="activity-detail">-->
+<!--                                    <p>New books added this month</p>-->
+<!--                                    <span th:text="${newBooksThisMonth} + ' books'">0 books</span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="activity-item">-->
+<!--                                <div class="activity-icon student-added">-->
+<!--                                    <i class="fas fa-user-plus"></i>-->
+<!--                                </div>-->
+<!--                                <div class="activity-detail">-->
+<!--                                    <p>New students registered</p>-->
+<!--                                    <span th:text="${newStudentsThisMonth} + ' students'">0 students</span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="activity-item">-->
+<!--                                <div class="activity-icon allotment-added">-->
+<!--                                    <i class="fas fa-handshake"></i>-->
+<!--                                </div>-->
+<!--                                <div class="activity-detail">-->
+<!--                                    <p>Books allotted this month</p>-->
+<!--                                    <span th:text="${allotmentsThisMonth} + ' allotments'">0 allotments</span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <!-- Quick Actions -->
+            <div class="quick-actions-section">
+                <h3>Quick Actions</h3>
+                <div class="actions-grid">
+                    <a href="/book" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Manage Books</h4>
+                            <p>Add, edit or delete books</p>
+                        </div>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+
+                    <a href="/allotment" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Allot Books</h4>
+                            <p>Allot books to students</p>
+                        </div>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+
+                    <a href="/student" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Students</h4>
+                            <p>Manage student information</p>
+                        </div>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+
+                    <a href="/vendor" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Vendors</h4>
+                            <p>Manage book suppliers</p>
+                        </div>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+
+                    <a href="/purchase" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Purchase Books</h4>
+                            <p>Record book purchases</p>
+                        </div>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+
+                    <a href="/allotment-history" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Allotment History</h4>
+                            <p>View allotment records</p>
+                        </div>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="/js/dashboard-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management - Appointments</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+    <link rel="stylesheet" href="/css/purchase-styles.css">
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="/img/logo.jpg" alt="Logo" class="logo">
+            <div class="header-text">
+                <h3>Library</h3>
+                <p>Management</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/doctor" class="nav-item">
+                <i class="fas fa-user-md"></i>
+                <span>Manage Doctors</span>
+            </a>
+            <a href="/patient" class="nav-item">
+                <i class="fas fa-user-injured"></i>
+                <span>Manage Patients</span>
+            </a>
+            <a href="/appointment" class="nav-item active">
+                <i class="fas fa-calendar-check"></i>
+                <span>Appointments</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/logout" class="nav-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Appointments</h1>
+            </div>
+            <div class="header-right">
+                <span class="date">Saturday 22nd November 2025</span>
+            </div>
+        </header>
+
+        <!-- Appointment Management Section -->
+        <section class="content-area">
+            <div class="section-header">
+                <div class="breadcrumb">
+                    <i class="fas fa-home"></i>
+                    <span>/</span>
+                    <span>Appointments</span>
+                </div>
+                <button class="btn-primary">
+                    <i class="fas fa-plus"></i> Book New Appointment
+                </button>
+            </div>
+
+            <!-- Table Controls -->
+            <div class="table-controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search by doctor or patient...">
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Doctor</th>
+                        <th>Patient</th>
+                        <th>Appointment Date</th>
+                        <th>Time</th>
+                        <th>Symptoms</th>
+                        <th>Status</th>
+                        <th>Booking Date</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="a, aa : ${appointments}">
+                        <td><span th:text="${aa.count}"></span></td>
+                        <td><span th:text="${a.doctor.name}"></span></td>
+                        <td><span th:text="${a.patient.name}"></span></td>
+                        <td><span th:text="${a.appointmentDate}"></span></td>
+                        <td><span th:text="${a.appointmentTime}"></span></td>
+                        <td><span th:text="${a.symptoms}"></span></td>
+                        <td>
+                            <span th:if="${a.status == 'SCHEDULED'}" class="status-badge scheduled">
+                                <i class="fas fa-clock"></i> Scheduled
+                            </span>
+                            <span th:if="${a.status == 'COMPLETED'}" class="status-badge completed">
+                                <i class="fas fa-check-circle"></i> Completed
+                            </span>
+                            <span th:if="${a.status == 'CANCELLED'}" class="status-badge cancelled">
+                                <i class="fas fa-times-circle"></i> Cancelled
+                            </span>
+                        </td>
+                        <td><span th:text="${a.bookingDate}"></span></td>
+                        <td class="action-cell">
+                            <form th:if="${a.status == 'SCHEDULED'}" th:action="@{/appointment/{id}/complete(id=${a.id})}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn-action edit" title="Mark Complete">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                            <form th:if="${a.status == 'SCHEDULED'}" th:action="@{/appointment/{id}/cancel(id=${a.id})}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn-action" title="Cancel" style="background: rgba(255, 166, 0, 0.1); color: #ffa600;">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                            </form>
+                            <form th:action="@{/appointment/{id}/delete(id=${a.id})}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn-action delete" title="Delete" onclick="return confirm('Are you sure?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Add Appointment Modal -->
+<div class="modal" id="addPurchaseModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Book Appointment</h2>
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form th:action="@{/appointment}" th:object="${dto}" class="modal-form" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="doctor">Doctor</label>
+                    <select th:field="*{doctor}" id="doctor" required>
+                        <option value="">Select Doctor</option>
+                        <option th:each="doc : ${doctors}" th:value="${doc.email}" th:text="${doc.name + ' - ' + doc.specialization}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="patient">Patient</label>
+                    <select th:field="*{patient}" id="patient" required>
+                        <option value="">Select Patient</option>
+                        <option th:each="pat : ${patients}" th:value="${pat.email}" th:text="${pat.name}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="appointmentDate">Appointment Date</label>
+                    <input th:field="*{appointmentDate}" type="text" id="appointmentDate" placeholder="Select date" required>
+                </div>
+                <div class="form-group">
+                    <label for="appointmentTime">Appointment Time</label>
+                    <input th:field="*{appointmentTime}" type="time" id="appointmentTime" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="symptoms">Symptoms</label>
+                <textarea th:field="*{symptoms}" id="symptoms" placeholder="Describe symptoms" rows="3" required></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn-save">Book Appointment</button>
+                <button type="button" class="btn-cancel">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script src="/js/purchase-script.js"></script>
+</body>
+</html>

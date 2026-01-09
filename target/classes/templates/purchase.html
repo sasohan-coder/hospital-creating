@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management - Purchase Books</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+    <link rel="stylesheet" href="/css/purchase-styles.css">
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="/img/logo.jpg" alt="Logo" class="logo">
+            <div class="header-text">
+                <h3>Library</h3>
+                <p>Management</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="allotment" class="nav-item">
+                <i class="fas fa-bookmark"></i>
+                <span>Books Allotment</span>
+            </a>
+
+            <div class="nav-item-group">
+                <a href="#" class="nav-item group-toggle">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Books Management</span>
+                    <i class="fas fa-chevron-up toggle-icon"></i>
+                </a>
+                <div class="submenu">
+                    <a href="book" class="submenu-item">
+                        <i class="fas fa-book"></i>
+                        <span>Manage Books</span>
+                    </a>
+                    <a href="allotment-history" class="submenu-item">
+                        <i class="fas fa-history"></i>
+                        <span>Allotment History</span>
+                    </a>
+<!--                    <a href="#" class="submenu-item">-->
+<!--                        <i class="fas fa-paper-plane"></i>-->
+<!--                        <span>Submission</span>-->
+<!--                    </a>-->
+                </div>
+            </div>
+
+            <a href="student" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Student Management</span>
+            </a>
+            <a href="purchase" class="nav-item active">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Purchase Books</span>
+            </a>
+            <a href="vendor" class="nav-item">
+                <i class="fas fa-building"></i>
+                <span>Vendor Management</span>
+            </a>
+            <a href="publication" class="nav-item">
+                <i class="fas fa-newspaper"></i>
+                <span>Publications</span>
+            </a>
+            <a href="subscription" class="nav-item">
+                <i class="fas fa-file-invoice"></i>
+                <span>Subscription Type</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="logout" class="nav-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Welcome back, ARM Abir!</h1>
+            </div>
+            <div class="header-right">
+                <span class="date">Saturday 22nd November 2025</span>
+                <button class="cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Purchase Management Section -->
+        <section class="content-area">
+            <div class="section-header">
+                <div class="breadcrumb">
+                    <i class="fas fa-home"></i>
+                    <span>/</span>
+                    <span>Purchase Books</span>
+                </div>
+                <button class="btn-primary">
+                    <i class="fas fa-plus"></i> Add New Purchase
+                </button>
+            </div>
+
+            <!-- Table Controls -->
+            <div class="table-controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search by book name...">
+                </div>
+            </div>
+
+            <div th:if="${param.purchase}" class="toast">
+                <span class="toast-message">Purchase record already Exists!</span>
+            </div>
+
+            <!-- prevent deleting with child-->
+            <div th:if="${param.child}" class="toast">
+                <span class="toast-message">Can't delete purchase. These books are in allotment</span>
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Book Name</th>
+                        <th>Vendor</th>
+                        <th>Quantity</th>
+                        <th>Per Book Price</th>
+                        <th>Total Amount</th>
+                        <th>Purchase Date</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p, pp : ${purchases}">
+                        <td><span th:text="${pp.count}"></span></td>
+                        <td><span th:text="${p.book.bookName}"></span></td>
+                        <td><span th:text="${p.vendor.name}"></span></td>
+                        <td><span th:text="${p.quantity}"></span></td>
+                        <td><span th:text="'₹' + ${p.perBookPrice}"></span></td>
+                        <td><span th:text="'₹' + ${p.totalAmount}"></span></td>
+                        <td><span th:text="${p.purchaseDate}"></span></td>
+                        <td class="action-cell">
+<!--                            <button class="btn-action edit" title="Edit">-->
+<!--                                <i class="fas fa-edit"></i>-->
+<!--                            </button>-->
+                            <form th:action="@{/purchase/{id}/delete(id=${p.id})}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn-action delete" title="Delete" onclick="return confirm('Are you sure?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Add Purchase Modal -->
+<div class="modal" id="addPurchaseModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add Purchase</h2>
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form th:action="@{/purchase}" th:object="${dto}" class="modal-form" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="bookName">Book Name</label>
+                    <select th:field="*{bookName}" id="bookName" required>
+                        <option value="">Select Book</option>
+                        <option th:each="book : ${books}" th:value="${book.bookName}" th:text="${book.bookName}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="vendor">Vendor</label>
+                    <select th:field="*{vendor}" id="vendor" required>
+                        <option value="">Select Vendor</option>
+                        <option th:each="vend : ${vendors}" th:value="${vend.name}" th:text="${vend.name}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input th:field="*{quantity}" type="number" id="quantity" placeholder="Enter quantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="perBookPrice">Per Book Price</label>
+                    <input th:field="*{perBookPrice}" type="number" id="perBookPrice" placeholder="Enter per book price" step="0.01" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="purchaseDate">Purchase Date</label>
+                    <input th:field="*{purchaseDate}" type="text" id="purchaseDate" placeholder="Select date" required>
+                </div>
+            </div>
+            <div class="form-group total-group">
+                <label for="totalAmount">Total Amount</label>
+                <div class="total-display">
+                    <span class="currency">₹</span>
+                    <input type="text" id="totalAmount" placeholder="0.00" disabled>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn-save">Save</button>
+                <button type="button" class="btn-cancel">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Purchase Modal -->
+<div class="modal" id="editPurchaseModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Purchase</h2>
+            <button class="modal-close-edit">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form th:action="@{purchase/update}" th:object="${dto}" method="post" class="modal-form-edit">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editBookName">Book Name</label>
+                    <select th:field="*{bookName}" id="editBookName" required>
+                        <option value="">Select Book</option>
+                        <option th:each="book : ${books}" th:value="${book.bookName}" th:text="${book.bookName}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editVendor">Vendor</label>
+                    <select th:field="*{vendor}" id="editVendor" required>
+                        <option value="">Select Vendor</option>
+                        <option th:each="vend : ${vendors}" th:value="${vend.name}" th:text="${vend.name}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editQuantity">Quantity</label>
+                    <input th:field="*{quantity}" type="number" id="editQuantity" placeholder="Enter quantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPerBookPrice">Per Book Price</label>
+                    <input th:field="*{perBookPrice}" type="number" id="editPerBookPrice" placeholder="Enter per book price" step="0.01" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editPurchaseDate">Purchase Date</label>
+                    <input th:field="*{purchaseDate}" type="text" id="editPurchaseDate" placeholder="Select date" required>
+                </div>
+            </div>
+            <div class="form-group total-group">
+                <label for="editTotalAmount">Total Amount</label>
+                <div class="total-display">
+                    <span class="currency">₹</span>
+                    <input type="text" id="editTotalAmount" placeholder="0.00" disabled>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn-update">Update</button>
+                <button type="button" class="btn-cancel-edit">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script src="/js/purchase-script.js"></script>
+</body>
+</html>

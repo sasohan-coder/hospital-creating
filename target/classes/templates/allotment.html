@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management - Book Allotment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+    <link rel="stylesheet" href="/css/allotment-styles.css">
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="/img/logo.jpg" alt="Logo" class="logo">
+            <div class="header-text">
+                <h3>Library</h3>
+                <p>Management</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item active">
+                <i class="fas fa-bookmark"></i>
+                <span>Books Allotment</span>
+            </a>
+
+            <div class="nav-item-group">
+                <a href="#" class="nav-item group-toggle">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Books Management</span>
+                    <i class="fas fa-chevron-up toggle-icon"></i>
+                </a>
+                <div class="submenu">
+                    <a href="book" class="submenu-item">
+                        <i class="fas fa-book"></i>
+                        <span>Manage Books</span>
+                    </a>
+                    <a href="allotment-history" class="submenu-item">
+                        <i class="fas fa-history"></i>
+                        <span>Allotment History</span>
+                    </a>
+<!--                    <a href="#" class="submenu-item">-->
+<!--                        <i class="fas fa-paper-plane"></i>-->
+<!--                        <span>Submission</span>-->
+<!--                    </a>-->
+                </div>
+            </div>
+
+            <a href="student" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Student Management</span>
+            </a>
+            <a href="purchase" class="nav-item">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Purchase Books</span>
+            </a>
+            <a href="vendor" class="nav-item">
+                <i class="fas fa-building"></i>
+                <span>Vendor Management</span>
+            </a>
+            <a href="publication" class="nav-item">
+                <i class="fas fa-newspaper"></i>
+                <span>Publications</span>
+            </a>
+            <a href="subscription" class="nav-item">
+                <i class="fas fa-file-invoice"></i>
+                <span>Subscription Type</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="logout" class="nav-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Welcome back, ARM Abir!</h1>
+            </div>
+            <div class="header-right">
+                <span class="date">Saturday 22nd November 2025</span>
+                <button class="cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Book Allotment Section -->
+        <section class="content-area">
+            <div class="section-header">
+                <div class="breadcrumb">
+                    <i class="fas fa-home"></i>
+                    <span>/</span>
+                    <span>Book Allotment</span>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="search-section">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search books...">
+                </div>
+            </div>
+
+            <!-- Success Message -->
+<!--            <div th:if="${param.success}" class="success-toast">-->
+<!--                <i class="fas fa-check-circle"></i>-->
+<!--                <span>Book allotted successfully!</span>-->
+<!--            </div>-->
+
+            <!-- Books Grid -->
+            <div class="books-grid">
+                <div th:each="book : ${books}" class="book-card" >
+                    <div class="card-image">
+                        <img th:src="${book.bookImage}" alt="Book Image">
+                        <div class="quantity-badge" th:text="${book.availableQuantity} + ' left'"></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="book-title" th:text="${book.bookName}"></h3>
+                        <p class="book-author" th:text="'By ' + ${book.authorName}"></p>
+<!--                        <p class="book-publisher" th:text="${book.publisherName}"></p>-->
+                        <br>
+                        <button th:if="${book.availableQuantity > 0}" class="allot-btn" th:attr="data-book-name=${book.bookName}, data-book-image=${book.bookImage}">
+                            <i class="fas fa-hand-holding-heart"></i> Allot Book
+                        </button>
+<!--                        <button th:if="${book.availableQuantity == 0}" class="allot-btn" onclick="window.location.href= '/purchase'">-->
+<!--                            <i class="fas fa-hand-holding-heart"></i> Buy Book-->
+<!--                        </button>-->
+                    </div>
+                </div>
+
+<!--                <div th:if="${#lists.isEmpty(books) or #lists.every(books, #b -> b.availableQuantity == 0)}" class="no-books">-->
+<!--                    <i class="fas fa-inbox"></i>-->
+<!--                    <p>No books available for allotment</p>-->
+<!--                </div>-->
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Allot Book Modal -->
+<div class="modal" id="allotModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title-section">
+                <img id="modalBookImage" src="" alt="Book" class="modal-book-image">
+                <div>
+                    <h2>Allot Book</h2>
+                    <p class="modal-book-name" id="modalBookName"></p>
+                </div>
+            </div>
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form th:action="@{/allotment}" th:object="${dto}" class="modal-form" method="post">
+            <input type="hidden" id="hiddenBookName" th:field="*{book}">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="studentName">Student</label>
+                    <select th:field="*{student}" id="studentName" required>
+                        <option value="">Select Student</option>
+                        <option th:each="student : ${students}" th:value="${student.email}" th:text="${student.name}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="subscriptionType">Subscription Type</label>
+                    <select th:field="*{subscriptionType}" id="subscriptionType" required>
+                        <option value="">Select Subscription</option>
+                        <option th:each="sub : ${subscriptions}" th:value="${sub.title}" th:text="${sub.title}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="startDate">Starting Date</label>
+                    <input type="text" id="startDate" placeholder="Select start date" required>
+                    <input type="hidden" id="hiddenStartDate" th:field="*{startDate}">
+                </div>
+                <div class="form-group">
+                    <label for="endDate">End Date</label>
+                    <input type="text" id="endDate" placeholder="Select end date" required>
+                    <input type="hidden" id="hiddenEndDate" th:field="*{endDate}">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn-allot">
+                    <i class="fas fa-check"></i> Allot Book
+                </button>
+                <button type="button" class="btn-cancel">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script src="/js/allotment-script.js"></script>
+</body>
+</html>

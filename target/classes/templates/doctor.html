@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management - Manage Doctors</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/book-styles.css">
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="/img/logo.jpg" alt="Logo" class="logo">
+            <div class="header-text">
+                <h3>Library</h3>
+                <p>Management</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/doctor" class="nav-item active">
+                <i class="fas fa-user-md"></i>
+                <span>Manage Doctors</span>
+            </a>
+            <a href="/patient" class="nav-item">
+                <i class="fas fa-user-injured"></i>
+                <span>Manage Patients</span>
+            </a>
+            <a href="/appointment" class="nav-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>Appointments</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/logout" class="nav-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Manage Doctors</h1>
+            </div>
+            <div class="header-right">
+                <span class="date">Saturday 22nd November 2025</span>
+            </div>
+        </header>
+
+        <!-- Doctor Management Section -->
+        <section class="content-area">
+            <div class="section-header">
+                <div class="breadcrumb">
+                    <i class="fas fa-home"></i>
+                    <span>/</span>
+                    <span>Manage Doctors</span>
+                </div>
+                <button class="btn-primary">
+                    <i class="fas fa-plus"></i> Add New Doctor
+                </button>
+            </div>
+
+            <!-- Table Controls -->
+            <div class="table-controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search by doctor name...">
+                </div>
+            </div>
+
+            <div th:if="${param.doctor}" class="toast">
+                <span class="toast-message">Doctor already Exists!</span>
+            </div>
+
+            <div th:if="${param.child}" class="toast">
+                <span class="toast-message">Can't delete doctor with existing appointments</span>
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Doctor Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Specialization</th>
+                        <th>Qualification</th>
+                        <th>Consultation Fee</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="d, dd : ${doctors}">
+                        <td><span th:text="${dd.count}"></span></td>
+                        <td><span th:text="${d.name}"></span></td>
+                        <td><span th:text="${d.email}"></span></td>
+                        <td><span th:text="${d.phone}"></span></td>
+                        <td><span th:text="${d.specialization}"></span></td>
+                        <td><span th:text="${d.qualification}"></span></td>
+                        <td><span th:text="'$' + ${d.consultationFee}"></span></td>
+                        <td class="action-cell">
+                            <button class="btn-action edit" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <form th:action="@{/doctor/{email}/delete(email=${d.email})}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn-action delete" title="Delete" onclick="return confirm('Are you sure?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Add Doctor Modal -->
+<div class="modal" id="addBookModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add Doctor</h2>
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form th:action="@{/doctor}" th:object="${dto}" class="modal-form" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="doctorName">Doctor Name</label>
+                    <input th:field="*{name}" type="text" id="doctorName" placeholder="Enter doctor name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input th:field="*{email}" type="email" id="email" placeholder="Enter email" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input th:field="*{phone}" type="tel" id="phone" placeholder="Enter phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="specialization">Specialization</label>
+                    <input th:field="*{specialization}" type="text" id="specialization" placeholder="Enter specialization" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="qualification">Qualification</label>
+                    <input th:field="*{qualification}" type="text" id="qualification" placeholder="Enter qualification" required>
+                </div>
+                <div class="form-group">
+                    <label for="consultationFee">Consultation Fee</label>
+                    <input th:field="*{consultationFee}" type="number" id="consultationFee" placeholder="Enter fee" step="0.01" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn-save">Save</button>
+                <button type="button" class="btn-cancel">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Doctor Modal -->
+<div class="modal" id="editBookModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Doctor</h2>
+            <button class="modal-close-edit">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form th:action="@{/doctor/update}" th:object="${dto}" method="post" class="modal-form-edit">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editDoctorName">Doctor Name</label>
+                    <input th:field="*{name}" type="text" id="editDoctorName" placeholder="Enter doctor name" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email</label>
+                    <input th:field="*{email}" type="email" id="editEmail" placeholder="Enter email" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editPhone">Phone</label>
+                    <input th:field="*{phone}" type="tel" id="editPhone" placeholder="Enter phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="editSpecialization">Specialization</label>
+                    <input th:field="*{specialization}" type="text" id="editSpecialization" placeholder="Enter specialization" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editQualification">Qualification</label>
+                    <input th:field="*{qualification}" type="text" id="editQualification" placeholder="Enter qualification" required>
+                </div>
+                <div class="form-group">
+                    <label for="editConsultationFee">Consultation Fee</label>
+                    <input th:field="*{consultationFee}" type="number" id="editConsultationFee" placeholder="Enter fee" step="0.01" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn-update">Update</button>
+                <button type="button" class="btn-cancel-edit">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/book-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management - Manage Patients</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+    <link rel="stylesheet" href="/css/student-styles.css">
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="/img/logo.jpg" alt="Logo" class="logo">
+            <div class="header-text">
+                <h3>Library</h3>
+                <p>Management</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/doctor" class="nav-item">
+                <i class="fas fa-user-md"></i>
+                <span>Manage Doctors</span>
+            </a>
+            <a href="/patient" class="nav-item active">
+                <i class="fas fa-user-injured"></i>
+                <span>Manage Patients</span>
+            </a>
+            <a href="/appointment" class="nav-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>Appointments</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/logout" class="nav-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Manage Patients</h1>
+            </div>
+            <div class="header-right">
+                <span class="date">Saturday 22nd November 2025</span>
+            </div>
+        </header>
+
+        <!-- Patient Management Section -->
+        <section class="content-area">
+            <div class="section-header">
+                <div class="breadcrumb">
+                    <i class="fas fa-home"></i>
+                    <span>/</span>
+                    <span>Patient Management</span>
+                </div>
+                <button class="btn-primary">
+                    <i class="fas fa-plus"></i> Add New Patient
+                </button>
+            </div>
+
+            <!-- Table Controls -->
+            <div class="table-controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+            </div>
+
+            <div th:if="${param.patient}" class="toast">
+                <span class="toast-message">Patient already Exists!</span>
+            </div>
+
+            <div th:if="${param.child}" class="toast">
+                <span class="toast-message">Can't delete patient with existing appointments</span>
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Date of Birth</th>
+                        <th>Blood Group</th>
+                        <th>Registration Date</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p, pp : ${patients}">
+                        <td><span th:text="${pp.count}"></span></td>
+                        <td><span th:text="${p.name}"></span></td>
+                        <td><span th:text="${p.email}"></span></td>
+                        <td><span th:text="${p.phone}"></span></td>
+                        <td><span th:text="${p.address}"></span></td>
+                        <td><span th:text="${p.dateOfBirth}"></span></td>
+                        <td><span th:text="${p.bloodGroup}"></span></td>
+                        <td><span th:text="${p.registrationDate}"></span></td>
+                        <td class="action-cell">
+                            <button class="btn-action edit" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <form th:action="@{/patient/{email}/delete(email=${p.email})}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn-action delete" title="Delete" onclick="return confirm('Are you sure?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Add Patient Modal -->
+<div class="modal" id="addStudentModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add Patient</h2>
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form th:action="@{/patient}" th:object="${dto}" class="modal-form" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="patientName">Name</label>
+                    <input th:field="*{name}" type="text" id="patientName" placeholder="Enter patient name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input th:field="*{email}" type="email" id="email" placeholder="Enter email" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input th:field="*{phone}" type="text" id="phone" placeholder="Enter phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="bloodGroup">Blood Group</label>
+                    <select th:field="*{bloodGroup}" id="bloodGroup" required>
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dateOfBirth">Date of Birth</label>
+                    <input th:field="*{dateOfBirth}" type="text" id="dateOfBirth" placeholder="Select date" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input th:field="*{address}" type="text" id="address" placeholder="Enter address" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn-save">Save</button>
+                <button type="button" class="btn-cancel">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Patient Modal -->
+<div class="modal" id="editStudentModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Patient</h2>
+            <button class="modal-close-edit">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form th:action="@{/patient/update}" th:object="${dto}" method="post" class="modal-form-edit">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editPatientName">Name</label>
+                    <input th:field="*{name}" type="text" id="editPatientName" placeholder="Enter patient name" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email</label>
+                    <input th:field="*{email}" type="email" id="editEmail" placeholder="Enter email" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editPhone">Phone</label>
+                    <input th:field="*{phone}" type="text" id="editPhone" placeholder="Enter phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="editBloodGroup">Blood Group</label>
+                    <select th:field="*{bloodGroup}" id="editBloodGroup" required>
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editDateOfBirth">Date of Birth</label>
+                    <input th:field="*{dateOfBirth}" type="text" id="editDateOfBirth" placeholder="Select date" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAddress">Address</label>
+                    <input th:field="*{address}" type="text" id="editAddress" placeholder="Enter address" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn-update">Update</button>
+                <button type="button" class="btn-cancel-edit">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script>
+    // Initialize date picker
+    flatpickr('#dateOfBirth', {
+        dateFormat: 'Y-m-d',
+        maxDate: 'today'
+    });
+
+    flatpickr('#editDateOfBirth', {
+        dateFormat: 'Y-m-d',
+        maxDate: 'today'
+    });
+</script>
+<script src="/js/student-script.js"></script>
+</body>
+</html>

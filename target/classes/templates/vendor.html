@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management - Vendor Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/vendor-styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/img/logo.jpg" alt="Logo" class="logo">
+                <div class="header-text">
+                    <h3>Library</h3>
+                    <p>Management</p>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="/" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="allotment" class="nav-item">
+                    <i class="fas fa-bookmark"></i>
+                    <span>Books Allotment</span>
+                </a>
+                
+                <div class="nav-item-group">
+                    <a href="book" class="nav-item group-toggle">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Books Management</span>
+                        <i class="fas fa-chevron-up toggle-icon"></i>
+                    </a>
+                    <div class="submenu">
+                        <a href="book" class="submenu-item">
+                            <i class="fas fa-book"></i>
+                            <span>Manage Books</span>
+                        </a>
+                        <a href="allotment-history" class="submenu-item">
+                            <i class="fas fa-history"></i>
+                            <span>Allotment History</span>
+                        </a>
+<!--                        <a href="submission" class="submenu-item">-->
+<!--                            <i class="fas fa-paper-plane"></i>-->
+<!--                            <span>Submission</span>-->
+<!--                        </a>-->
+                    </div>
+                </div>
+
+                <a href="student" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Student Management</span>
+                </a>
+                <a href="purchase" class="nav-item">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Purchase Books</span>
+                </a>
+                <a href="vendor" class="nav-item active">
+                    <i class="fas fa-building"></i>
+                    <span>Vendor Management</span>
+                </a>
+                <a href="publication" class="nav-item">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Publications</span>
+                </a>
+                <a href="subscription" class="nav-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>Subscription Type</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="logout" class="nav-item logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Welcome back, ARM Abir!</h1>
+                </div>
+                <div class="header-right">
+                    <span class="date">Saturday 22nd November 2025</span>
+                    <button class="cart-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Vendor Management Section -->
+            <section class="content-area">
+                <div class="section-header">
+                    <div class="breadcrumb">
+                        <i class="fas fa-home"></i>
+                        <span>/</span>
+                        <span>Vendor Management</span>
+                    </div>
+                    <button class="btn-primary">
+                        <i class="fas fa-plus"></i> Add New Vendor
+                    </button>
+                </div>
+
+                <!-- Table Controls -->
+                <div class="table-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                </div>
+
+                <div th:if="${param.vendor}" class="toast">
+                    <span class="toast-message">Vendor already Exists!</span>
+                </div>
+
+                <div th:if="${param.child}" class="toast">
+                    <span class="toast-message">Can't delete vendor with existing purchases</span>
+                </div>
+
+                <!-- Table -->
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>S.No.</th>
+                                <th>Vendor Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="v, vv : ${vendors}">
+                                <td><span th:text="${vv.count}"></span></td>
+                                <td><span th:text="${v.name}"></span></td>
+                                <td><span th:text="${v.email}"></span></td>
+                                <td><span th:text="${v.phone}"></span></td>
+                                <td class="action-cell">
+                                    <button class="btn-action edit" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <form th:action="@{/vendor/{name}/delete(name=${v.name})}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn-action delete" title="Delete" onclick="return confirm('Are you sure?');">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Vendor Modal -->
+    <div class="modal" id="addVendorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Vendor</h2>
+                <button class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form th:action="@{/vendor}" th:object="${dto}" class="modal-form" method="post">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vendorName">Vendor Name</label>
+                        <input th:field="*{name}" type="text" id="vendorName" placeholder="Enter vendor name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input th:field="*{email}" type="email" id="email" placeholder="Enter email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input th:field="*{phone}" type="text" id="phone" placeholder="Enter phone number" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn-save">Save</button>
+                    <button type="button" class="btn-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Vendor Modal -->
+    <div class="modal" id="editVendorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Vendor</h2>
+                <button class="modal-close-edit">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form th:action="@{/vendor/update}" th:object="${dto}" method="post" class="modal-form-edit">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editVendorName">Vendor Name</label>
+                        <input th:field="*{name}" type="text" id="editVendorName" placeholder="Enter vendor name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input th:field="*{email}" type="email" id="editEmail" placeholder="Enter email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Phone</label>
+                    <input th:field="*{phone}" type="text" id="editPhone" placeholder="Enter phone number" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn-update">Update</button>
+                    <button type="button" class="btn-cancel-edit">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/vendor-script.js"></script>
+</body>
+</html>
