@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management - Payment Records</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+    <link rel="stylesheet" href="/css/purchase-styles.css">
+    <style>
+        .filter-section {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: var(--glass-border);
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .filter-group input {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--bg-input);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #fff;
+            outline: none;
+        }
+
+        .btn-filter {
+            background: var(--primary-glow);
+            color: #000;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-filter:hover {
+            background: #fff;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .btn-clear {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-clear:hover {
+            background: var(--accent-red);
+            color: #fff;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, rgba(0, 242, 255, 0.1) 0%, rgba(30, 30, 50, 0.6) 100%);
+            border: 1px solid var(--primary-glow);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .summary-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 242, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-glow);
+        }
+
+        .summary-content h3 {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .summary-content .amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-glow);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .payment-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-cash {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .badge-card {
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--primary-glow);
+            border: 1px solid var(--primary-glow);
+        }
+
+        .badge-online {
+            background: rgba(189, 0, 255, 0.1);
+            color: var(--secondary-glow);
+            border: 1px solid var(--secondary-glow);
+        }
+
+        .form-row-three {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row-three {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="/img/logo1.png" alt="Logo" class="logo">
+            <div class="header-text">
+                <h3>Clinic</h3>
+                <p>Management</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/patient" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Patients</span>
+            </a>
+            <a href="/doctor" class="nav-item">
+                <i class="fas fa-user-md"></i>
+                <span>Doctors</span>
+            </a>
+            <a href="/appointment" class="nav-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>Appointments</span>
+            </a>
+            <a href="/payment" class="nav-item active">
+                <i class="fas fa-money-bill"></i>
+                <span>Payments</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/logout" class="nav-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Payment Records</h1>
+            </div>
+            <div class="header-right">
+                <span class="date">Saturday 22nd November 2025</span>
+            </div>
+        </header>
+
+        <!-- Payment Section -->
+        <section class="content-area">
+            <div class="section-header">
+                <div class="breadcrumb">
+                    <i class="fas fa-home"></i>
+                    <span>/</span>
+                    <span>Payments</span>
+                </div>
+                <button class="btn-primary">
+                    <i class="fas fa-plus"></i> Add New Payment
+                </button>
+            </div>
+
+            <!-- Total Summary -->
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="summary-content">
+                    <h3>Total Payment Received</h3>
+                    <div class="amount" th:text="'$' + ${totalAmount != null ? totalAmount : 0}">$0</div>
+                </div>
+            </div>
+
+            <!-- Date Filter -->
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label for="filterDate">Filter by Date</label>
+                    <input type="text" id="filterDate" placeholder="Select date">
+                </div>
+                <button class="btn-filter" onclick="filterByDate()">
+                    <i class="fas fa-filter"></i> Apply Filter
+                </button>
+                <button class="btn-clear" onclick="clearFilter()">
+                    <i class="fas fa-times"></i> Clear Filter
+                </button>
+            </div>
+
+            <!-- Table Controls -->
+            <div class="table-controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search by patient or transaction ID...">
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Patient Name</th>
+                        <th>Amount</th>
+                        <th>Payment Method</th>
+                        <th>Transaction ID</th>
+                        <th>Payment For</th>
+                        <th>Payment Date</th>
+                        <th>Remarks</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p, pp : ${payments}">
+                        <td><span th:text="${pp.count}"></span></td>
+                        <td><span th:text="${p.patient.name}"></span></td>
+                        <td><span th:text="'$' + ${p.amount}" style="font-weight: 700; color: var(--primary-glow);"></span></td>
+                        <td>
+                            <span th:if="${p.paymentMethod == 'CASH'}" class="payment-badge badge-cash">
+                                <i class="fas fa-money-bill-wave"></i> Cash
+                            </span>
+                            <span th:if="${p.paymentMethod == 'CARD'}" class="payment-badge badge-card">
+                                <i class="fas fa-credit-card"></i> Card
+                            </span>
+                            <span th:if="${p.paymentMethod == 'ONLINE'}" class="payment-badge badge-online">
+                                <i class="fas fa-mobile-alt"></i> Online
+                            </span>
+                        </td>
+                        <td><span th:text="${p.transactionId}"></span></td>
+                        <td><span th:text="${p.paymentFor}"></span></td>
+                        <td><span th:text="${p.paymentDate}"></span></td>
+                        <td><span th:text="${p.remarks}"></span></td>
+                        <td class="action-cell">
+                            <form th:action="@{/payment/{id}/delete(id=${p.id})}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn-action delete" title="Delete" onclick="return confirm('Are you sure?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Add Payment Modal -->
+<div class="modal" id="addPurchaseModal">
+    <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-header">
+            <h2>Add Payment Record</h2>
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form th:action="@{/payment}" th:object="${dto}" class="modal-form" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="patient">Patient *</label>
+                    <select th:field="*{patient}" id="patient" required>
+                        <option value="">Select Patient</option>
+                        <option th:each="pat : ${patients}" th:value="${pat.email}" th:text="${pat.name + ' (' + pat.email + ')'}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appointment">Related Appointment (Optional)</label>
+                    <select th:field="*{appointment}" id="appointment">
+                        <option value="">No Appointment</option>
+                        <option th:each="apt : ${appointments}" th:value="${apt.id}"
+                                th:text="${apt.patient.name + ' - ' + apt.appointmentDate}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row-three">
+                <div class="form-group">
+                    <label for="amount">Amount *</label>
+                    <input th:field="*{amount}" type="number" id="amount" placeholder="Enter amount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="paymentMethod">Payment Method *</label>
+                    <select th:field="*{paymentMethod}" id="paymentMethod" required>
+                        <option value="">Select Method</option>
+                        <option value="CASH">Cash</option>
+                        <option value="CARD">Card</option>
+                        <option value="ONLINE">Online</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="paymentDate">Payment Date *</label>
+                    <input th:field="*{paymentDate}" type="text" id="paymentDate" placeholder="Select date" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="paymentFor">Payment For *</label>
+                    <select th:field="*{paymentFor}" id="paymentFor" required>
+                        <option value="">Select Purpose</option>
+                        <option value="CONSULTATION">Consultation Fee</option>
+                        <option value="MEDICINE">Medicine</option>
+                        <option value="TEST">Medical Test</option>
+                        <option value="SURGERY">Surgery</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionId">Transaction ID</label>
+                    <input th:field="*{transactionId}" type="text" id="transactionId" placeholder="Enter transaction ID">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="remarks">Remarks</label>
+                <textarea th:field="*{remarks}" id="remarks" placeholder="Add any remarks" rows="2"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn-save">Save Payment</button>
+                <button type="button" class="btn-cancel">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script>
+    // Initialize date pickers
+    flatpickr('#paymentDate', {
+        dateFormat: 'Y-m-d',
+        defaultDate: new Date()
+    });
+
+    const filterDatePicker = flatpickr('#filterDate', {
+        dateFormat: 'Y-m-d'
+    });
+
+    // Filter by date
+    function filterByDate() {
+        const date = document.getElementById('filterDate').value;
+        if (date) {
+            window.location.href = '/payment?filterDate=' + date;
+        }
+    }
+
+    // Clear filter
+    function clearFilter() {
+        window.location.href = '/payment';
+    }
+
+    // Sidebar Toggle
+    const menuToggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    menuToggle?.addEventListener('click', () => sidebar.classList.toggle('active'));
+
+    // Modal handlers
+    const addButton = document.querySelector('.btn-primary');
+    const modal = document.getElementById('addPurchaseModal');
+    const modalClose = document.querySelector('.modal-close');
+    const btnCancel = document.querySelector('.btn-cancel');
+
+    addButton?.addEventListener('click', () => {
+        document.querySelector('.modal-form').reset();
+        modal.classList.add('active');
+    });
+
+    modalClose?.addEventListener('click', () => modal.classList.remove('active'));
+    btnCancel?.addEventListener('click', () => modal.classList.remove('active'));
+    modal?.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+    });
+
+    // Search functionality
+    const searchInput = document.querySelector('.search-box input');
+    const tableRows = document.querySelectorAll('.data-table tbody tr');
+
+    searchInput?.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+
+        tableRows.forEach(row => {
+            const patientName = row.cells[1].textContent.toLowerCase();
+            const transactionId = row.cells[4].textContent.toLowerCase();
+
+            const matches = patientName.includes(searchTerm) || transactionId.includes(searchTerm);
+            row.style.display = matches ? '' : 'none';
+        });
+    });
+
+    // Update date display
+    const dateDisplay = document.querySelector('.date');
+    if (dateDisplay) {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const todayDate = new Date().toLocaleDateString('en-US', options);
+        dateDisplay.textContent = todayDate;
+    }
+</script>
+</body>
+</html>

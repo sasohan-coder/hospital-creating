@@ -24,3 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Datepicker
     flatpickr('#appointmentDate', { dateFormat: 'Y-m-d', defaultDate: new Date() });
 });
+
+const dateDisplay = document.querySelector('.date');
+if (dateDisplay) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const today = new Date().toLocaleDateString('en-US', options);
+    dateDisplay.textContent = today;
+}
