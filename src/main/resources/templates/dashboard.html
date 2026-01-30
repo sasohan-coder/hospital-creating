@@ -1,182 +1,190 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clinic Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/dashboard-styles.css">
 </head>
+
 <body>
-<div class="container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <img src="/img/logo1.png" alt="Logo" class="logo">
-            <div class="header-text">
-                <h3>Clinic</h3>
-                <p>Management</p>
-            </div>
-        </div>
-
-        <nav class="nav-menu">
-            <a href="/" class="nav-item active">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="/patient" class="nav-item">
-                <i class="fas fa-users"></i>
-                <span>Patients</span>
-            </a>
-            <a href="/doctor" class="nav-item">
-                <i class="fas fa-user-md"></i>
-                <span>Doctors</span>
-            </a>
-            <a href="/appointment" class="nav-item">
-                <i class="fas fa-calendar-check"></i>
-                <span>Appointments</span>
-            </a>
-            <a href="/payment" class="nav-item">
-                <i class="fas fa-money-bill"></i>
-                <span>Payments</span>
-            </a>
-        </nav>
-
-        <div class="sidebar-footer">
-            <a href="/logout" class="nav-item logout">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <header class="top-header">
-            <div class="header-left">
-                <button class="menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <h1>Welcome back, Admin!</h1>
-            </div>
-            <div class="header-right">
-                <span class="date" th:text="${todayDate}">Saturday 22nd November 2025</span>
-
-            </div>
-        </header>
-
-        <section class="content-area">
-            <!-- Key Metrics -->
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-icon patients">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="metric-content">
-                        <p class="metric-label">Total Patients</p>
-                        <p class="metric-value" th:text="${totalPatients}">0</p>
-                    </div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-icon doctors">
-                        <i class="fas fa-user-md"></i>
-                    </div>
-                    <div class="metric-content">
-                        <p class="metric-label">Total Doctors</p>
-                        <p class="metric-value" th:text="${totalDoctors}">0</p>
-                    </div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-icon appointments">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <div class="metric-content">
-                        <p class="metric-label">Today's Appointments</p>
-                        <p class="metric-value" th:text="${todayAppointments}">0</p>
-                    </div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-icon payments">
-                        <i class="fas fa-money-bill"></i>
-                    </div>
-                    <div class="metric-content">
-                        <p class="metric-label">Today's Payments</p>
-                        <p class="metric-value" th:text="${todayPayments}">0</p>
-                    </div>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/img/logo1.png" alt="Logo" class="logo">
+                <div class="header-text">
+                    <h3>Clinic</h3>
+                    <p>Management</p>
                 </div>
             </div>
 
-            <!-- Completed vs Pending Appointments -->
-            <div class="charts-section">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3>Appointments Overview</h3>
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <div class="chart-content">
-                        <p>Completed Appointments: <span th:text="${completedAppointments}">0</span></p>
-                        <p>Pending Appointments: <span th:text="${pendingAppointments}">0</span></p>
-                    </div>
-                </div>
-            </div>
+            <nav class="nav-menu">
+                <a href="/" class="nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/patient" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Patients</span>
+                </a>
+                <a href="/doctor" class="nav-item">
+                    <i class="fas fa-user-md"></i>
+                    <span>Doctors</span>
+                </a>
+                <a href="/appointment" class="nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+                <a href="/payment" class="nav-item">
+                    <i class="fas fa-money-bill"></i>
+                    <span>Payments</span>
+                </a>
+            </nav>
 
-            <!-- Quick Actions -->
-            <div class="quick-actions-section">
-                <h3>Quick Actions</h3>
-                <div class="actions-grid">
-                    <a href="/patient" class="action-card">
-                        <div class="action-icon">
-                            <i class="fas fa-user-plus"></i>
+            <div class="sidebar-footer">
+                <form th:action="@{/logout}" method="POST" style="margin: 0;">
+                    <button type="submit" class="nav-item logout"
+                        style="background: none; border: none; cursor: pointer; width: 100%; text-align: left;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Welcome back, Admin!</h1>
+                </div>
+                <div class="header-right">
+                    <span class="date" th:text="${todayDate}">Saturday 22nd November 2025</span>
+
+                </div>
+            </header>
+
+            <section class="content-area">
+                <!-- Key Metrics -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon patients">
+                            <i class="fas fa-users"></i>
                         </div>
-                        <div class="action-content">
-                            <h4>Manage Patients</h4>
-                            <p>Add or update patient info</p>
+                        <div class="metric-content">
+                            <p class="metric-label">Total Patients</p>
+                            <p class="metric-value" th:text="${totalPatients}">0</p>
                         </div>
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
+                    </div>
 
-                    <a href="/doctor" class="action-card">
-                        <div class="action-icon">
+                    <div class="metric-card">
+                        <div class="metric-icon doctors">
                             <i class="fas fa-user-md"></i>
                         </div>
-                        <div class="action-content">
-                            <h4>Manage Doctors</h4>
-                            <p>Add or update doctor info</p>
+                        <div class="metric-content">
+                            <p class="metric-label">Total Doctors</p>
+                            <p class="metric-value" th:text="${totalDoctors}">0</p>
                         </div>
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
+                    </div>
 
-                    <a href="/appointment" class="action-card">
-                        <div class="action-icon">
+                    <div class="metric-card">
+                        <div class="metric-icon appointments">
                             <i class="fas fa-calendar-check"></i>
                         </div>
-                        <div class="action-content">
-                            <h4>Appointments</h4>
-                            <p>Schedule or manage appointments</p>
+                        <div class="metric-content">
+                            <p class="metric-label">Today's Appointments</p>
+                            <p class="metric-value" th:text="${todayAppointments}">0</p>
                         </div>
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
+                    </div>
 
-                    <a href="/payment" class="action-card">
-                        <div class="action-icon">
+                    <div class="metric-card">
+                        <div class="metric-icon payments">
                             <i class="fas fa-money-bill"></i>
                         </div>
-                        <div class="action-content">
-                            <h4>Payments</h4>
-                            <p>Record payments</p>
+                        <div class="metric-content">
+                            <p class="metric-label">Today's Payments</p>
+                            <p class="metric-value" th:text="${todayPayments}">0</p>
                         </div>
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
+                    </div>
                 </div>
-            </div>
-        </section>
-    </main>
-</div>
 
-<script src="/js/dashboard-script.js"></script>
+                <!-- Completed vs Pending Appointments -->
+                <div class="charts-section">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Appointments Overview</h3>
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="chart-content">
+                            <p>Completed Appointments: <span th:text="${completedAppointments}">0</span></p>
+                            <p>Pending Appointments: <span th:text="${pendingAppointments}">0</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions-section">
+                    <h3>Quick Actions</h3>
+                    <div class="actions-grid">
+                        <a href="/patient" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Manage Patients</h4>
+                                <p>Add or update patient info</p>
+                            </div>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+
+                        <a href="/doctor" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Manage Doctors</h4>
+                                <p>Add or update doctor info</p>
+                            </div>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+
+                        <a href="/appointment" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Appointments</h4>
+                                <p>Schedule or manage appointments</p>
+                            </div>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+
+                        <a href="/payment" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-money-bill"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Payments</h4>
+                                <p>Record payments</p>
+                            </div>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/js/dashboard-script.js"></script>
 </body>
+
 </html>
